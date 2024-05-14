@@ -145,7 +145,7 @@ export default function EditProductForm({
 				</div>
 				<Divider />
 				<CardFooter className="justify-between">
-					<Dialog>
+					{/* <Dialog>
 						<DialogTrigger asChild>
 							<Button variant="destructive">Eliminar</Button>
 						</DialogTrigger>
@@ -175,7 +175,7 @@ export default function EditProductForm({
 								</DialogFooter>
 							</form>
 						</DialogContent>
-					</Dialog>
+					</Dialog> */}
 					<div className="flex flex-row gap-x-4 items-center">
 						<Link
 							className={buttonVariants({
