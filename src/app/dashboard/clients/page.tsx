@@ -1,6 +1,14 @@
 import { selectClients } from "@/actions/client";
 import Search from "@/components/search";
-import { buttonVariants } from "@/components/ui/button";
+import { Button, buttonVariants } from "@/components/ui/button";
+import {
+	DropdownMenu,
+	DropdownMenuContent,
+	DropdownMenuItem,
+	DropdownMenuLabel,
+	DropdownMenuSeparator,
+	DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
 	Pagination,
@@ -19,7 +27,7 @@ import {
 	TableHeader,
 	TableRow,
 } from "@/components/ui/table";
-import { UserPlus } from "lucide-react";
+import { MoreVertical, UserPlus } from "lucide-react";
 import Link from "next/link";
 import React from "react";
 
@@ -67,7 +75,27 @@ export default async function ClientsPage({
 							<TableCell>{client.name}</TableCell>
 							<TableCell>{client.address}</TableCell>
 							<TableCell>{client.phone}</TableCell>
-							<TableCell />
+							<TableCell>
+								<DropdownMenu>
+									<DropdownMenuTrigger asChild>
+										<Button variant="outline" size="icon">
+											<MoreVertical />
+										</Button>
+									</DropdownMenuTrigger>
+									<DropdownMenuContent>
+										<DropdownMenuLabel>Acciones</DropdownMenuLabel>
+										<DropdownMenuSeparator />
+										<DropdownMenuItem>
+											<Link
+												className="h-full w-full"
+												href={`/dashboard/clients/edit?_id=${client._id}`}
+											>
+												Editar
+											</Link>
+										</DropdownMenuItem>
+									</DropdownMenuContent>
+								</DropdownMenu>
+							</TableCell>
 						</TableRow>
 					))}
 				</TableBody>

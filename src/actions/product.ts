@@ -5,6 +5,7 @@ import {
 	insertProductInDB,
 	selectProductFromDB,
 	selectProductsFromDB,
+	updateProductInDB,
 } from "@/db";
 import {
 	type SelectProduct,
@@ -78,10 +79,7 @@ export const updateProduct = async (
 	sizes?: string[] | undefined;
 	error?: string | undefined;
 }> => {
-	const _id = crypto.randomUUID();
-
 	const product = Object.fromEntries(payload.entries());
-	product._id = _id;
 
 	const sizes = Object.keys(product)
 		.filter((key) => key.startsWith("size_"))
@@ -101,7 +99,7 @@ export const updateProduct = async (
 		return { sizes: ["Debes seleccionar al menos un tamaño"] };
 	}
 
-	insertProductInDB(
+	updateProductInDB(
 		parsedData.data,
 		sizes as (typeof sizeEnum.enumValues)[number][],
 	).catch((error) => {

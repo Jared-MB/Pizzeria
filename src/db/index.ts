@@ -116,6 +116,24 @@ export const selectEmployeesFromDB = async (page = 1, name?: string) => {
 	};
 };
 
+export const selectEmployeeFromDB = async (employeeId: string) =>
+	await db
+		.select({
+			_id: employees._id,
+			name: employees.name,
+			username: employees.username,
+			role: employees.role,
+			permissions: employees.permissions,
+		})
+		.from(employees)
+		.where(eq(employees._id, employeeId));
+
+export const updateEmployeeInDB = async (employee: Partial<NewEmployee>) =>
+	await db
+		.update(employees)
+		.set(employee)
+		.where(eq(employees._id, employee._id as string));
+
 export const getAuthUser = async (username: string, password: string) => {
 	const user = await db.query.employees.findFirst({
 		where: (user, { eq }) => eq(user.username, username),
@@ -173,44 +191,46 @@ export const insertProductInDB = async (
 	};
 };
 
-// export const updateProductInDB = async (
-// 	product: Partial<InsertProductSchema>,
-// 	productSizes: (typeof sizeEnum.enumValues)[number][],
-// ) => {
-// 	const productData = await db.update(products).set(product).returning({
-// 		_id: products._id,
-// 	});
+export const updateProductInDB = async (
+	product: Partial<InsertProductSchema>,
+	productSizes: (typeof sizeEnum.enumValues)[number][],
+) => {
+	await db
+		.update(products)
+		.set({ ...product })
+		.where(eq(products._id, product._id as string))
+		.returning({
+			_id: products._id,
+		});
 
-// 	const productToSizes = await db
-// 		.select({
-// 			sizeId: productsToSizes.sizeId,
-// 		})
-// 		.from(productsToSizes)
-// 		.where(eq(productsToSizes.productId, productData[0]._id));
+	await db
+		.delete(productsToSizes)
+		.where(eq(productsToSizes.productId, product._id as string));
 
-// 	const dbSizes = await db.select().from(sizes);
+	const sizesToInsertPromises = productSizes.map(async (size) => {
+		const sizes = await selectSize(size);
+		const sizeId = sizes[0]._id;
 
-// 	const productSizesWithIds = productSizes.map((size) => {
-// 		const sizeId = dbSizes.find((s) => s.name === size)?._id;
-// 		return sizeId;
-// 	});
+		return {
+			_id: crypto.randomUUID(),
+			productId: product._id as string,
+			sizeId,
+		};
+	});
 
-// 	const unusedSizes = productToSizes.filter(
-// 		(size) => !productSizesWithIds.includes(size.sizeId),
-// 	);
+	const sizesToInsert = await Promise.all(sizesToInsertPromises);
 
-// 	await db.delete(productsToSizes).where(
-// 		eq(productsToSizes.sizeId, unusedSizes.map((s) => s.sizeId)),
-// 	);
+	try {
+		await db.insert(productsToSizes).values(sizesToInsert).returning();
+	} catch (error) {
+		console.error("Error adding product to sizes", error);
+		throw error;
+	}
 
-// 	const newSizes = productSizesWithIds.filter(
-// 		(size) => !productToSizes.map((s) => s.sizeId).includes(size),
-// 	);
-
-// 	return {
-// 		ok: true,
-// 	};
-// };
+	return {
+		ok: true,
+	};
+};
 
 export const selectProductFromDB = async (productId: string) => {
 	const rawProduct = await db
@@ -350,6 +370,15 @@ export const selectClientsFromDB = async (page = 1, name?: string) => {
 		page: page,
 	};
 };
+
+export const selectClientFromDB = async (clientId: string) =>
+	await db.select().from(clients).where(eq(clients._id, clientId));
+
+export const updateClientInDB = async (client: Partial<Client>) =>
+	await db
+		.update(clients)
+		.set(client)
+		.where(eq(clients._id, client._id as string));
 
 // #region Orders
 

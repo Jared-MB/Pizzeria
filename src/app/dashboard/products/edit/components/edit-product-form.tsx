@@ -1,6 +1,6 @@
 "use client";
 
-import { deleteProduct, insertProduct } from "@/actions/product";
+import { deleteProduct, insertProduct, updateProduct } from "@/actions/product";
 import { Button, buttonVariants } from "@/components/ui/button";
 
 import {
@@ -39,7 +39,7 @@ import { useFormState, useFormStatus } from "react-dom";
 export default function EditProductForm({
 	product,
 }: { product: SelectProduct }) {
-	const [errors, dispatch] = useFormState(insertProduct, undefined);
+	const [errors, dispatch] = useFormState(updateProduct, undefined);
 	const [values, setValues] = useState<string[]>(product.sizes);
 
 	return (
@@ -55,7 +55,13 @@ export default function EditProductForm({
 				<CardBody>
 					<CardSubtitle>Información básica</CardSubtitle>
 					<div className="flex flex-row gap-x-4 items-start">
-						<input defaultValue={product._id} readOnly hidden aria-hidden />
+						<input
+							defaultValue={product._id}
+							name="_id"
+							readOnly
+							hidden
+							aria-hidden
+						/>
 						<InputContainer>
 							<Label>Nombre *</Label>
 							<Input

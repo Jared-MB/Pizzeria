@@ -34,7 +34,10 @@ export default async function EmployeesPage({
 	searchParams,
 }: { searchParams: { page: string } }) {
 	const params = new URLSearchParams(searchParams);
-	const data = await selectEmployees(Number(params.get("page")) || 1, params.get("name") ?? "");
+	const data = await selectEmployees(
+		Number(params.get("page")) || 1,
+		params.get("name") ?? "",
+	);
 
 	return (
 		<main>
@@ -83,6 +86,7 @@ export default async function EmployeesPage({
 										<DropdownMenuSeparator />
 										<DropdownMenuItem>
 											<Link
+												className="w-full h-full"
 												href={`/dashboard/employees/edit?_id=${employee._id}`}
 											>
 												Editar

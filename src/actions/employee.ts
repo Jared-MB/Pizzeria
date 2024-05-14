@@ -1,12 +1,42 @@
 "use server";
 
-import { createEmployee, selectEmployeesFromDB } from "@/db";
-import { insertEmployeeSchema } from "@/db/schemas";
+import {
+	createEmployee,
+	selectEmployeeFromDB,
+	selectEmployeesFromDB,
+	updateEmployeeInDB,
+} from "@/db";
+import { insertEmployeeSchema, updateEmployeeSchema } from "@/db/schemas";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 
 export const selectEmployees = async (page: number, name?: string) =>
 	await selectEmployeesFromDB(page, name);
+
+export const selectEmployee = async (id: string) =>
+	(await selectEmployeeFromDB(id))[0];
+
+export const updateEmployee = async (
+	_prevState: unknown,
+	payload: FormData,
+) => {
+	const employee = Object.fromEntries(payload.entries());
+
+	const parsedData = updateEmployeeSchema.safeParse(employee);
+
+	if (!parsedData.success) {
+		console.log("Error updating employee", parsedData.error.flatten());
+		return parsedData.error.flatten().fieldErrors;
+	}
+
+	updateEmployeeInDB(parsedData.data).catch((error) => {
+		console.error("Error updating employee", error);
+		return { error: "Error updating employee" };
+	});
+
+	revalidatePath("/dashboard/employees");
+	redirect("/dashboard/employees");
+};
 
 export const insertEmployee = async (
 	_prevState: unknown,

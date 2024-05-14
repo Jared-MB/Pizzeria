@@ -23,3 +23,8 @@ export type NewEmployee = typeof employees.$inferInsert;
 export const insertEmployeeSchema = createInsertSchema(employees, {
 	password: z.string().min(8, "La contraseña debe tener al menos 8 caracteres"),
 });
+
+export const updateEmployeeSchema = createInsertSchema(employees, {
+	password: z.string().optional(),
+	permissions: z.string().optional(),
+});

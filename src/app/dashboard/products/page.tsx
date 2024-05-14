@@ -87,6 +87,7 @@ export default async function ProductsPage({
 										<DropdownMenuSeparator />
 										<DropdownMenuItem>
 											<Link
+												className="w-full h-full"
 												href={`/dashboard/products/edit?_id=${product._id}`}
 											>
 												Editar
