@@ -6,6 +6,11 @@ const nextConfig = {
                 source: '/dashboard',
                 destination: '/dashboard/orders',
                 permanent: true
+            },
+            {
+                source: '/',
+                destination: '/dashboard',
+                permanent: true
             }
         ]
     }
